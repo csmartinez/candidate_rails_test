@@ -1,0 +1,47 @@
+<div class="container">
+	<div class="well">
+		<% album_id = request.original_url.scan( /\d+$/ ).first.to_i %>
+
+		<br><br>
+
+		<% get_album_url = ('https://jsonplaceholder.typicode.com/albums/' + album_id.to_s) %>
+
+		<% album = HTTParty.get(get_album_url,
+		:headers =>{'Content-Type' => 'application/json'}) %>
+
+		<h1>Album: <i><%= album["title"] %></i></h1>
+		<br>
+
+
+		<% userId = album["userId"].to_i %>
+
+		<% get_user_url = ('https://jsonplaceholder.typicode.com/users/' + userId.to_s) %>
+
+		<% user = HTTParty.get(get_user_url,
+		:headers =>{'Content-Type' => 'application/json'}) %>
+
+		<h4>User Contact Info: </h4>
+		<b>Full name: </b> <%= link_to user["name"], "/users/#{userId}" %><br>
+		<b>User name: </b> <%= user["username"] %><br>
+		<b>E-Mail: </b> <%= user["email"] %><br>
+		<b>Phone: </b> <%= user["phone"] %><br>
+
+		<br>
+
+		<% get_photos_url = ('https://jsonplaceholder.typicode.com/photos?albumId=' + album_id.to_s) %>
+
+		<% photos = HTTParty.get(get_photos_url,
+		:headers =>{'Content-Type' => 'application/json'}) %>
+
+		<% photos.each do |photo| %>
+			<%= image_tag(photo["url"], {:style => "width:100px;"}) %>
+		<% end %>
+
+		<br><br>
+
+		<%= link_to "Back", albums_path %>
+
+		<br><br><br>
+		
+	</div>
+</div>

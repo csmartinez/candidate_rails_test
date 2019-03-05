@@ -1,0 +1,46 @@
+<div class="container">
+	<div class="well">
+		<br><br>
+		<h1> Practical Test <small><i>Written 3/4/19 by Carli Martinez</i></small> </h1>
+		<br>
+		<h3>Albums: </h3>
+		<br>
+
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">Title</th>
+					<th scope="col">Artist</th>
+				</tr>
+			</thead>
+
+			<% page = params[:page] %>
+			<% if page == nil %>
+				<% page = 1 %>
+			<% end %>
+
+			<tbody>
+				<% @albums = WillPaginate::Collection.create(page, 10, 100) do |album| %>
+						<% album.replace @responses[album.offset, album.per_page].to_a %>
+						<% for a in album do %>
+							<tr>
+								<% album_id = a["id"].to_i %>
+
+								<% userId = a["userId"] %>
+
+								<% get_user_url = ('https://jsonplaceholder.typicode.com/users/' + userId.to_s) %>
+
+								<% user = HTTParty.get(get_user_url,
+								:headers =>{'Content-Type' => 'application/json'}) %>
+
+								<td><%= link_to a["title"], "/albums/#{album_id}" %></td>
+								<td><%= link_to user["name"], "/users/#{userId}" %></td>
+							</tr>
+						<% end %>
+				<% end %>
+			</tbody>
+		</table>
+		<br>
+		<%= will_paginate @albums %>
+	</div>
+</div>
